@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TFIDFExample
+namespace NeuralNetwork
 {
-    class NeuralNetwork
+    public class SingleLayerNeuralNetwork
     {
         private Input[] inputs;
         private Neuron[] neurons;
@@ -17,30 +17,30 @@ namespace TFIDFExample
         private readonly double educationSpeed = 0.7;
         private static int trainingRound = 1;
 
-        public NeuralNetwork(int numberOfSemanticClasses, int significanceVectorLength)
+        public SingleLayerNeuralNetwork(string[] classes, string[] vocabulary)
         {
-            this.numberOfSemanticClasses = numberOfSemanticClasses;
-            this.significanceVectorLength = significanceVectorLength;
+            this.numberOfSemanticClasses = classes.Count();
+            this.significanceVectorLength = vocabulary.Count();
 
             inputs = new Input[significanceVectorLength];
             neurons = new Neuron[numberOfSemanticClasses];
 
-            InitializeInputs();
-            InitializeNeurons();
+            InitializeInputs(vocabulary);
+            InitializeNeurons(classes);
             CreateNetwork();
             SetZeroExcitations();
         }
 
-        private void InitializeInputs()
+        private void InitializeInputs(string[] vocabulary)
         {
             for (var i = 0; i < significanceVectorLength; i++)
-                inputs[i] = new Input(numberOfSemanticClasses);
+                inputs[i] = new Input(numberOfSemanticClasses, vocabulary[i]);
         }
 
-        private void InitializeNeurons()
+        private void InitializeNeurons(string[] classes)
         {
             for (var i = 0; i < numberOfSemanticClasses; i++)
-                neurons[i] = new Neuron(significanceVectorLength);
+                neurons[i] = new Neuron(significanceVectorLength, classes[i]);
         }
 
         private void CreateNetwork()
@@ -57,9 +57,9 @@ namespace TFIDFExample
         }
 
         
-        public void Study(double[] input, int correctAnswer)
+        public void Study(double[] input, string correctAnswer)
         {
-            var neuron = neurons[correctAnswer];
+            var neuron = neurons.Single(x => x.Value == correctAnswer);
             var normalizedVector = NormalizeVector(input);
 
             for (var i = 0; i < neuron.IncomingLinks.Length; i++)
@@ -84,7 +84,7 @@ namespace TFIDFExample
         }
 
         
-        public int Parse(double[] input)
+        public string Parse(double[] input)
         {
             var vector = new double[significanceVectorLength];
             for (var i = 0; i < numberOfSemanticClasses; i++)
@@ -99,7 +99,7 @@ namespace TFIDFExample
             int maxIndex = FindNeuronWithMaxExcitation();
             SetZeroExcitations();
 
-            return maxIndex;
+            return neurons[maxIndex].Value;
         }
 
         private int FindNeuronWithMaxExcitation()

@@ -10,11 +10,10 @@ namespace NeuralNetwork
     {
         public Link[] IncomingLinks;
         public double Power { get; set; }
-        public string Value;
+        public int trainingRound = 1;
 
-        public Neuron(int incomingLinksCount, string value)
+        public Neuron(int incomingLinksCount)
         {
-            Value = value;
             IncomingLinks = new Link[incomingLinksCount];
             Power = 0;
         }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "NeuralNetw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDb", "..\EntityDb\EntityDb\EntityDb.csproj", "{18C27182-CA9F-4C06-8E8B-F63E64BE18DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextClassificator", "TextClassificator\TextClassificator.csproj", "{3E103F4D-8633-44A1-B05A-94C5B93A736A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{18C27182-CA9F-4C06-8E8B-F63E64BE18DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18C27182-CA9F-4C06-8E8B-F63E64BE18DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18C27182-CA9F-4C06-8E8B-F63E64BE18DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E103F4D-8633-44A1-B05A-94C5B93A736A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E103F4D-8633-44A1-B05A-94C5B93A736A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E103F4D-8633-44A1-B05A-94C5B93A736A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E103F4D-8633-44A1-B05A-94C5B93A736A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,7 +15,6 @@ namespace NeuralNetwork
         private int significanceVectorLength;
 
         private readonly double educationSpeed = 0.7;
-        private static int trainingRound = 1;
 
         public SingleLayerNeuralNetwork(string[] classes, string[] vocabulary)
         {
@@ -40,7 +39,7 @@ namespace NeuralNetwork
         private void InitializeNeurons(string[] classes)
         {
             for (var i = 0; i < numberOfSemanticClasses; i++)
-                neurons[i] = new Neuron(significanceVectorLength, classes[i]);
+                neurons[i] = new Neuron(significanceVectorLength);
         }
 
         private void CreateNetwork()
@@ -56,20 +55,21 @@ namespace NeuralNetwork
             }
         }
 
-        
-        public void Study(double[] input, string correctAnswer)
+
+        public void Study(double[] input, int correctAnswer)
         {
-            var neuron = neurons.Single(x => x.Value == correctAnswer);
-            var normalizedVector = NormalizeVector(input);
+            var neuron = neurons[correctAnswer];
+            int trainingRound = neuron.trainingRound;
+            //var normalizedVector = NormalizeVector(input);
 
             for (var i = 0; i < neuron.IncomingLinks.Length; i++)
             {
                 var incomingLink = neuron.IncomingLinks[i];
                 incomingLink.Weight = incomingLink.Weight
-                    + (educationSpeed / trainingRound) * (normalizedVector[i] - incomingLink.Weight);
+                    + (educationSpeed / trainingRound) * (input[i] - incomingLink.Weight);
             }
 
-            trainingRound++;
+            neuron.trainingRound++;
         }
 
         private double[] NormalizeVector(double[] input)
@@ -84,22 +84,27 @@ namespace NeuralNetwork
         }
 
         
-        public string Parse(double[] input)
+        public int Parse(int[] input)
         {
-            var vector = new double[significanceVectorLength];
-            for (var i = 0; i < numberOfSemanticClasses; i++)
-            {
-                for (var j = 0; j < significanceVectorLength; j++)
-                {
-                    vector[j] = inputs[j].OutgoingLinks[i].Weight;
-                }
+            double[] normalizedInput= NormalizeVector(
+                input
+                .Select( x => (double)x)
+                .ToArray()
+                );
 
-                neurons[i].Power = cosineSimilarity(vector, input);
+            for (var i = 0; i < significanceVectorLength; i++)
+            {
+                var inputNeuron = inputs[i];
+                foreach (var outgoingLink in inputNeuron.OutgoingLinks)
+                {
+                    outgoingLink.Neuron.Power += outgoingLink.Weight * normalizedInput[i];
+                }
             }
+
             int maxIndex = FindNeuronWithMaxExcitation();
             SetZeroExcitations();
 
-            return neurons[maxIndex].Value;
+            return maxIndex;
         }
 
         private int FindNeuronWithMaxExcitation()
@@ -122,24 +127,20 @@ namespace NeuralNetwork
             }
         }
 
-        
-        private double cosineSimilarity(double[] vector1, double[] vector2)
-        {
-            return scalarProduct(vector1, vector2) / (vectorLength(vector1) * vectorLength(vector2));
-        }
+
+        /* private double cosineSimilarity(double[] vector1, double[] vector2)
+         {
+             return scalarProduct(vector1, vector2) / (vectorLength(vector1) * vectorLength(vector2));
+         }*/
 
         private double vectorLength(double[] vector)
         {
-            double vectorLength = 0;
-            for (var i = 0; i < vector.Length; i++)
-            {
-                vectorLength += vector[i] * vector[i];
-            }
-
-            return Math.Sqrt(vectorLength);
-
+            return Math.Sqrt(vector
+                .Select(x => x * x)
+                .Sum()
+                );
         }
-
+        /*
         private double scalarProduct(double[] vector1, double[] vector2)
         {
             if (vector1.Length != vector2.Length) throw new FormatException("scalarProduct method: invalid params");
@@ -151,6 +152,6 @@ namespace NeuralNetwork
             }
 
             return product;
-        }
+        }*/
     }
 }
